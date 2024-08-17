@@ -194,6 +194,8 @@ After a successful deployment, Terraform will display several outputs that provi
 - `ec2_instance_ids`: The ID of the EC2 instance (development instance)
 - `ec2_private_ips`: The private IP address of the EC2 instance.
 - `ec2_security_group_id`: The ID of the EC2 instances' security group.
+- `flask_secret_key_secret_name` - the name of the flask secret for use in your .env file
+- `openai_api_key_secret_name` - the name of your openai secret for use in your .env file
 
 These outputs can be useful for troubleshooting, further configuration, or integration with other systems.
 

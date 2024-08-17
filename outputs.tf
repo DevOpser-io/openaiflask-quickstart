@@ -47,3 +47,13 @@ output "ec2_security_group_id" {
 #  description = "The Zone ID of the Route 53 hosted zone"
 #  value       = data.aws_route53_zone.domain.zone_id
 #}
+
+output "openai_api_key_secret_name" {
+  description = "The name of the secret for the OpenAI API key"
+  value       = aws_secretsmanager_secret.openai_api_key.name
+}
+
+output "flask_secret_key_secret_name" {
+  description = "The name of the secret for the Flask secret key"
+  value       = aws_secretsmanager_secret.flask_secret_key.name
+}
