@@ -13,7 +13,7 @@ resource "aws_instance" "openaiflask" {
   iam_instance_profile   = aws_iam_instance_profile.openaiflask.name
   vpc_security_group_ids = [aws_security_group.openaiflask.id, data.aws_security_group.openvpn_sg.id]
   key_name               = var.key_name
-  subnet_id              = data.aws_subnets.amazon_linux[0].id 
+  subnet_id              = element(data.aws_subnets.amazon_linux.ids, 0)
     
   root_block_device {
     volume_type           = "gp2"
