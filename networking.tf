@@ -74,32 +74,37 @@ resource "random_string" "rando" {
 # In this dev branch, we are using a preexisting VPC and subnet, with an OpenVPN access server deployed to a public subnet in the same VPC.
 
 # Security Group for EC2 Instances
+# Security Group for EC2 Instances
 resource "aws_security_group" "openaiflask" {
   name        = "ai-application-sg-${random_string.rando.result}"
   description = "Security group for AI application EC2 instances"
   vpc_id      = data.aws_vpc.selected.id
 
+  # SSH access from OpenVPN Access Server
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["${var.your_ip_address}/32", var.access_server_sg_name]
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [data.aws_security_group.openvpn_sg.id]
   }
 
+  # Application access on port 8000 from OpenVPN Access Server
   ingress {
     from_port       = 8000
     to_port         = 8000
     protocol        = "tcp"
-    cidr_blocks = ["${var.your_ip_address}/32", var.access_server_sg_name]
+    security_groups = [data.aws_security_group.openvpn_sg.id]
   }
 
-    ingress {
+  # HTTP access on port 80 from OpenVPN Access Server
+  ingress {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    cidr_blocks = ["${var.your_ip_address}/32", var.access_server_sg_name]
+    security_groups = [data.aws_security_group.openvpn_sg.id]
   }
 
+  # Outbound internet access
   egress {
     from_port   = 0
     to_port     = 0
