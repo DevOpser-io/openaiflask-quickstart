@@ -9,7 +9,7 @@ resource "aws_instance" "openaiflask" {
   depends_on = [ aws_security_group.openaiflask, aws_iam_instance_profile.openaiflask ]
 # count                  = 2
   ami                    = var.openaiflask_ami_id
-  instance_type          = "t3.large"
+  instance_type          = "t3.medium"
   iam_instance_profile   = aws_iam_instance_profile.openaiflask.name
   vpc_security_group_ids = [aws_security_group.openaiflask.id, data.aws_security_group.openvpn_sg.id]
   key_name               = var.key_name
