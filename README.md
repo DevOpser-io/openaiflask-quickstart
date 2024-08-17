@@ -1,6 +1,6 @@
-# OpenAI Flask Application Quickstart
+# OpenAI Flask Application Quickstart - Dev Branch
 
-This quickstart guide helps you deploy an OpenAI-integrated Flask application on AWS using Terraform. The setup includes two EC2 instances, an Application Load Balancer (ALB) with SSL termination, and necessary networking components.
+This Dev branch of the quickstart has commented out all of the production related resources. It spins up a simple dev server in a private subnet (in a preexisting VPC and subnet), and provides a pattern for integrating with OpenVPN Access Server for secure access.
 
 ## Prerequisites
 
@@ -9,7 +9,6 @@ Before you begin, ensure you have the following:
 1. An AWS account
 2. Terraform installed on your local machine (version 0.12 or later)
 3. AWS CLI installed and configured with your credentials
-4. A domain registered in Amazon Route 53
 5. Basic knowledge of AWS, Terraform, and command-line operations
 6. Subscription to the DevOpser Flask AMI (see instructions below)
 
@@ -116,12 +115,10 @@ aws_region         = "us-east-1"  # The AWS region to deploy resources
 openaiflask_ami_id = "ami-xxxxxxxxxxxxxxxxx"  # AMI ID from the subscription process
 key_name           = "your-key-pair-name"  # Your EC2 key pair name
 your_ip_address    = "x.x.x.x"  # Your IP address for SSH access
-domain_name        = "yourdomain.com"  # Your registered domain in Route 53
-subdomain          = "openaiflask"  # The subdomain for your application
-public_subnet_cidr_1 = "10.0.1.0/24"  # CIDR for the first public subnet
-public_subnet_cidr_2 = "10.0.2.0/24"  # CIDR for the second public subnet
 openai_api_key     = "your-openai-api-key"  # Your OpenAI API key
 flask_secret_key   = "your-flask-secret-key"  # A secret key for Flask
+vpc_id            = "vpc-xxxxxxxxxxxxxxxxxx" # VPC ID for a preexisting VPC
+access_server_sg_name = "name_of_your_openvpn_access_server_security_group" # to enable SSH access via a private IP address. Requires an OpenVPN Access server to be deployed into the same VPC.
 ```
 
 ### Variable Values
@@ -129,12 +126,10 @@ flask_secret_key   = "your-flask-secret-key"  # A secret key for Flask
 - `aws_region`: Choose the AWS region where you want to deploy the resources. This should match the region you selected during the AMI subscription process.
 - `openaiflask_ami_id`: Use the AMI ID you noted down during the subscription process.
 - `key_name`: Create an EC2 key pair in your AWS account and provide its name.
-- `your_ip_address`: Your current public IP address. You can find this by searching "what is my ip" on Google.
-- `domain_name`: The domain you've registered in Amazon Route 53.
-- `subdomain`: The subdomain you want to use for your application.
-- `public_subnet_cidr_1` and `public_subnet_cidr_2`: CIDR blocks for the two public subnets.
 - `openai_api_key`: Your OpenAI API key.
 - `flask_secret_key`: A secret key for Flask. Generate a strong, random string for this.
+- `vpc_id` : VPC ID for a preexisting VPC
+- `access_server_sg_name` : to enable SSH access via a private IP address. Requires an OpenVPN Access server to be deployed into the same VPC.
 
 **Note on Variable Handling and Terraform Cloud**: While using a `terraform.tfvars` file is convenient for local development, it's not the most secure method for handling sensitive variables in a production environment. For enhanced security and better secret management, we strongly recommend using Terraform Cloud. Here's how to set it up:
 
@@ -196,16 +191,9 @@ Subdomain and domain_name are variables - please note the domain should be hoste
 
 After a successful deployment, Terraform will display several outputs that provide important information about your infrastructure. You can also retrieve these outputs at any time by running `terraform output`. Here are the key outputs:
 
-- `application_url`: The HTTPS URL where you can access your application.
-- `alb_dns_name`: The DNS name of the Application Load Balancer.
-- `ec2_instance_ids`: The IDs of the EC2 instances running your application.
-- `ec2_private_ips`: The private IP addresses of the EC2 instances.
-- `vpc_id`: The ID of the VPC where resources are deployed.
-- `public_subnet_ids`: The IDs of the public subnets used by the ALB.
-- `alb_security_group_id`: The ID of the ALB's security group.
+- `ec2_instance_ids`: The ID of the EC2 instance (development instance)
+- `ec2_private_ips`: The private IP address of the EC2 instance.
 - `ec2_security_group_id`: The ID of the EC2 instances' security group.
-- `acm_certificate_arn`: The ARN of the ACM certificate used for HTTPS.
-- `route53_zone_id`: The Zone ID of your Route 53 hosted zone.
 
 These outputs can be useful for troubleshooting, further configuration, or integration with other systems.
 
@@ -221,19 +209,13 @@ Confirm the destruction by typing `yes` when prompted.
 
 ## Important Notes
 
-1. **Costs**: This quickstart creates AWS resources that may incur costs. Based on current estimates, the resources in this configuration cost approximately $142/month to operate. Always review the AWS pricing for EC2 instances, Application Load Balancers, and associated services before deploying.
+1. **Costs**: This quickstart creates AWS resources that may incur costs. Based on current estimates, the resources in this dev configuration costs $60/month. Always review the AWS pricing for EC2 instances, Application Load Balancers, and associated services before deploying.
 
 2. **Security**: While this quickstart provides a basic secure setup, it's recommended to implement additional security measures for production use.
 
-3. **EC2 in Public Subnet**: This quickstart deploys the EC2 instances in public subnets for simplicity. For enhanced security in a production environment, consider deploying the EC2 instances in private subnets accessed via a bastion host, OpenVPN Access Server, or similar solution. This more secure architecture is outside the scope of this quickstart, but DevOpser can assist with implementing such a setup if needed. Please reach out to us for more information.
+3. **Dependencies**: Make sure all dependencies (Terraform, AWS CLI) are correctly installed and configured before starting.
 
-4. **SSL Certificate**: The quickstart uses AWS Certificate Manager for SSL. Ensure your domain is properly set up in Route 53 for successful certificate validation.
-
-5. **Dependencies**: Make sure all dependencies (Terraform, AWS CLI) are correctly installed and configured before starting.
-
-6. **Sticky Sessions**: This configuration implements sticky sessions on the Application Load Balancer. This ensures that a client is consistently routed to the same target in a group for the duration of a session, which enables a smooth AI chat experience for your users.
-
-7. **Future Cost Optimization**: DevOpser is currently developing the DevOpser Platform for AI Webhosting, which aims to productionalize your application at a fraction of the cost with a single click. This platform is on track for release in Q4 2024. Stay tuned for updates!
+4. **Future Cost Optimization**: DevOpser is currently developing the DevOpser Platform for AI Webhosting, which aims to productionalize your application at a fraction of the cost with a single click. This platform is on track for release in Q4 2024. Stay tuned for updates!
 
 ## Support
 
