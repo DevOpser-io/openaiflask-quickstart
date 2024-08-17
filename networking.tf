@@ -1,7 +1,7 @@
-#resource "random_string" "rando" {
-#  length  = 4
-#  special = false
-#}
+resource "random_string" "rando" {
+  length  = 4
+  special = false
+}
 
 # VPC
 #resource "aws_vpc" "vpc" {
