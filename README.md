@@ -209,7 +209,7 @@ Confirm the destruction by typing `yes` when prompted.
 
 ## Important Notes
 
-1. **Costs**: This quickstart creates AWS resources that may incur costs. Based on current estimates, the resources in this dev configuration costs $62.70/month. Always review the AWS pricing for EC2 instances, Application Load Balancers, and associated services before deploying.
+1. **Costs**: This quickstart creates AWS resources that may incur costs. Based on current estimates, the resources in this dev configuration costs $31.75/month (if you use a t3.medium to develop on). Always review the AWS pricing for EC2 instances, Application Load Balancers, and associated services before deploying.
 
 2. **Security**: While this quickstart provides a basic secure setup, it's recommended to implement additional security measures for production use.
 
